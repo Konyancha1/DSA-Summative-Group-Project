@@ -1,4 +1,4 @@
-#Authors
+Project Authors
 - Natasha Mramba:
 Created the hash table to contain customer order details
 
