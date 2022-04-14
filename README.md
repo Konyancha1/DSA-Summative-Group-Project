@@ -18,4 +18,3 @@ Our solution is aimed at tackling this problem by providing an efficient way of 
 - Spencer Kamayo
 - Oluwatomisin Bamidele
 - Kevin Onyancha
-
