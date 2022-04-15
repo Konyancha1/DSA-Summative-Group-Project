@@ -1,3 +1,5 @@
+import ast
+import random
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
@@ -5,7 +7,6 @@ from tkinter import messagebox
 root = Tk()
 root.title("E-commerce Order App")
 root.geometry("1280x720")
-
 title = Label(root, text='Online Shirt Order App', bg='white', fg='black',
               font=('Montserrat', 30, 'bold'), relief=GROOVE, bd=12)
 title.pack(fill=X)
@@ -55,6 +56,89 @@ combo_2 = ttk.Combobox(Frame_1, font=('Montserrat', 15), state='readonly', textv
 combo_2['value'] = ('X-Large', 'Large', 'Medium', 'Small', 'X-Small')
 combo_2.grid(row=4, column=1, pady=10)
 
+hashed_dict = {} # creating a global variable to
+def hashmap():
+    global hashed_dict
+    user = name.get()
+    user_address = address.get()
+    user_email = email.get()
+    shirt_type = shirt.get()
+    shirt_size = size.get()
+    # Creating our dictionary
+    order_dict = {}
+    for variables in ["user", "user_address", "user_email", "shirt_type", "shirt_size"]:
+        order_dict[variables] = eval(variables)
+
+    order_no = random.randint(0, 1000)
+
+    # hashed_dict = {}
+    # Creating a random number to identify orders
+    # while order_no in hashed_dict:
+
+    while order_no in hashed_dict:
+        order_no = random.randint(0, 1000)
+
+    msg.config(text="Your Order Number is " + str(order_no))
+    hashed_dict = {order_no: order_dict}
+    # print(hashed_dict)
+    # return hashed_dict
+
+
+def filing():
+    global hashed_dict
+    order_data = open("order_data.txt", 'a')
+    order_data.write(str(hashed_dict))
+    order_data.write("\n")
+    order_data.close()
+
+
+# How the customer tracks the order
+def orderProgress():
+    # Collecting the order number inputed by the user
+    order_no = number.get()
+    # order_no = 531
+
+    # Opening our file system where all the orders have been stored
+    order_details = open("order_data.txt", 'r')
+    # Looping through it then converting it to a dictionary
+    for no in order_details.readlines():
+        values = ast.literal_eval(no)
+        if order_no in values.keys():  # Find out if the order number exists in our system.
+
+            Frame_4 = Frame(root, bg="black", relief=RIDGE, bd=10)
+            Frame_4.place(x=10, y=80, width=1260, height=530)
+
+            view = Label(Frame_4, font=('Montserrat', 20, 'bold'), fg='black',
+                        bg='white')
+            view.grid(row=0, column=0, padx=150, pady=10)
+            view_0 = Label(Frame_4, font=('Montserrat', 20, 'bold'), fg='black',
+                         bg='white')
+            view_0.grid(row=1, column=0, padx=150, pady=10)
+
+            view.config(text='Your order is being Processed')
+            view_0.config(text="Here are your Details")
+            count = 2
+            # Looping through the dictionary and assigning values to be printed
+            print(values[order_no].keys())
+            for n, k in values[order_no].items():
+                view_1 = Label(Frame_4, font=('Montserrat', 15, 'bold'), fg='black',
+                              bg='white')
+                view_1.grid(row =count, column=0, padx=30, pady=10)
+                view_1.config(text=n + "    " + k)
+                count += 1
+        else:
+            pass
+            # err.config(text="We dont have that order in our system")
+            # err = messagebox.askquestion("We don't have that order in our system", "Do you want to qut?")
+            # if err == "Yes":
+            #     root.quit()
+            # messagebox.Message("We dont have that order in our system")
+    order_details.close()
+
+
+
+# orderProgress()
+
 
 def output():
     user = name.get()
@@ -73,13 +157,15 @@ def output():
                           fg='black', width=20, command=check)
     check_button.grid(row=0, column=1, padx=130, pady=15)
 
-    txt_file = open("order.txt", "w")
-    txt_file.write("Customer name: " + str(user))
-    txt_file.write("\nCustomer Address: " + str(user_address))
-    txt_file.write("\nCustomer Contact: " + str(user_email))
-    txt_file.write("\nShirt Type: " + str(shirt_type))
-    txt_file.write("\nShirt Size: " + str(shirt_size))
-    txt_file.close()
+    # txt_file = open("order.txt", "w")
+    # txt_file.write("Customer name: " + str(user))
+    # txt_file.write("\nCustomer Address: " + str(user_address))
+    # txt_file.write("\nCustomer Contact: " + str(user_email))
+    # txt_file.write("\nShirt Type: " + str(shirt_type))
+    # txt_file.write("\nShirt Size: " + str(shirt_size))
+    # txt_file.close()
+    hashmap()
+    filing()
 
 
 def ask():
@@ -97,7 +183,7 @@ def check():
     txt = Entry(Frame_4, font=('Montserrat', 15, 'bold'), relief=RIDGE, bd=7, textvariable=number)
     txt.grid(row=0, column=1, pady=10, sticky='w')
     enter = Button(Frame_4, text='Submit', font=('Arial', 12, 'bold'), bg='yellow',
-                   fg='black', command=check)
+                   fg='black', command=orderProgress)
     enter.grid(row=0, column=2, padx=10, pady=15)
 
     def back():
@@ -111,6 +197,9 @@ def check():
     Frame_4.tkraise()
 
 
+msg = Label(Frame_2, font=('Montserrat', 20, 'bold'), fg='black',
+            bg='white')
+msg.grid(row=8, column=0, padx=150, pady=10)
 out = Label(Frame_2, font=('Montserrat', 20, 'bold'), fg='black',
             bg='white')
 out.grid(row=0, column=0, padx=150, pady=10)
